@@ -7,8 +7,8 @@
 ; ALL Pins given as Port (A,B,C,...) plus number
 
 ; LED Pins
-#define	DDR_SS	_SFR_IO_ADDR(DDRD), 5	// SS pin (PIN, PORT)
-#define PORT_SS _SFR_IO_ADDR(PORTD), 5
+#define DDR_LED	_SFR_IO_ADDR(LED_DDR), LED_BIT	// LED pin (PIN, PORT)
+#define PORT_LED _SFR_IO_ADDR(LED_PORT), LED_BIT
 
 #define	DDR_PW	_SFR_IO_ADDR(DDRD), 6	// Power pin (PIN, PORT)
 #define PORT_PW _SFR_IO_ADDR(PORTD), 6
@@ -26,7 +26,7 @@
 .global init_leds
 .func init_leds
 init_leds:
-	sbi DDR_SS
+	sbi DDR_LED
 	sbi DDR_PW
 	ret
 .endfunc	
@@ -35,14 +35,14 @@ init_leds:
 .global led_write_on
 .func led_write_on
 led_write_on:
-	sbi PORT_SS
+	sbi PORT_LED
 	ret
 .endfunc	
 
 .global led_write_off
 .func led_write_off
 led_write_off:
-	cbi PORT_SS
+	cbi PORT_LED
 	ret
 .endfunc	
 
@@ -70,7 +70,7 @@ led_power_toggle:
 .global led_write_toggle
 .func led_write_toggle
 led_write_toggle:
-	sbis PORT_SS
+	sbis PORT_LED
 	jmp led_write_on
 	jmp led_write_off
 .endfunc	

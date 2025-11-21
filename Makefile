@@ -4,13 +4,16 @@
 # Change these defs for the target device
 
 MCU_TARGET    = atmega2560 # Target device to be used (32K or larger)
-BOOT_ADR      = 0x3E000 # Boot loader start address [byte] NOT [word] as in http://eleccelerator.com/fusecalc/fusecalc.php?chip=atmega1284p
+BOOT_ADR      = 0x3E000 # Boot loader start address [byte] NOT [word] as in http://eleccelerator.com/fusecalc/fusecalc.php?chip=atmega2560
 F_CPU         = 16000000  # CPU clock frequency [Hz] NOT critical: it just should be higher than the actual Hz 
-SD_CS_PORT    = PORTB # Data Register of the SD CS pin
-SD_CS_DDR     = DDRB # Data Direction Register of the SD CS pin
-SD_CS_BIT     = 4 # Bit of the SD CS pin
-USE_LED       = 0 # Debug with two (defined in asmfunc.S)
-USE_UART      = 0 # Debug on Serial. 0 ... deactivate or divider of http://wormfood.net/avrbaudcalc.php for baud rate!
+SD_CS_PORT    = PORTG # Data Register of the SD CS pin
+SD_CS_DDR     = DDRG # Data Direction Register of the SD CS pin
+SD_CS_BIT     = 5 # Bit of the SD CS pin
+USE_LED       = 1 # For debugging 0...deactivate or 1...active
+LED_DDR 	  = DDRD # Data Direction Register of the LED
+LED_PORT	  = PORTD # Data Register of the LED
+LED_BIT		  = 5 # Bit of the LED
+USE_UART      = 0 #25 # 25 is 38.4k Debug on Serial. 0 ... deactivate or divider of http://wormfood.net/avrbaudcalc.php for baud rate!
 #------------------------------------------------------------------
 ifeq ($(strip $(USE_UART)),0)
 CSRC        = main.c pff/src/pff.c diskio.c
@@ -21,7 +24,7 @@ endif
 TARGET      = avr_boot
 ASRC        = asmfunc.S
 OPTIMIZE    = -Os -mcall-prologues -ffunction-sections -fdata-sections
-DEFS        = -DBOOT_ADR=$(BOOT_ADR) -DF_CPU=$(F_CPU) -DUSE_LED=$(USE_LED) -DUSE_UART=$(USE_UART) -DSD_CS_PORT=$(SD_CS_PORT) -DSD_CS_DDR=$(SD_CS_DDR) -DSD_CS_BIT=$(SD_CS_BIT)
+DEFS        = -DBOOT_ADR=$(BOOT_ADR) -DF_CPU=$(F_CPU) -DUSE_LED=$(USE_LED) -DLED_DDR=$(LED_DDR) -DLED_PORT=$(LED_PORT) -DLED_BIT=$(LED_BIT) -DUSE_UART=$(USE_UART) -DSD_CS_PORT=$(SD_CS_PORT) -DSD_CS_DDR=$(SD_CS_DDR) -DSD_CS_BIT=$(SD_CS_BIT)
 LIBS        =
 DEBUG       = dwarf-2
 
@@ -31,10 +34,10 @@ CFLAGS      = -g$(DEBUG) -Wall $(OPTIMIZE) $(ADDED_CFLAGS) -mmcu=$(MCU_TARGET) -
 LDFLAGS     = -Wl,-Map,$(TARGET).map -Wl,--gc-sections -Wl,--section-start,.text=$(BOOT_ADR)
 OBJ         = $(CSRC:.c=.o) $(ASRC:.S=.o)
 
-CC          = avr-gcc
-OBJCOPY     = avr-objcopy
-OBJDUMP     = avr-objdump
-SIZE        = avr-size
+CC          = /opt/local/bin/avr-gcc
+OBJCOPY     = /usr/local/bin/avr-objcopy
+OBJDUMP     = /usr/local/bin/avr-objdump
+SIZE        = /usr/local/bin/avr-size
 
 
 all:	clean $(TARGET).elf lst text bin size
