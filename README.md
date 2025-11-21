@@ -1,6 +1,9 @@
 avr_boot
 ========
 
+![mega_with_eth](https://github.com/user-attachments/assets/e5e562d8-33d2-43a2-ade2-97f4df358e82)
+
+
 SD card bootloader for atmega processors
 
 As easy as it can get! I spent days with this. Hopefully you wont!
