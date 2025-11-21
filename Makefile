@@ -15,22 +15,18 @@ LED_PORT	  = PORTD # Data Register of the LED
 LED_BIT		  = 5 # Bit of the LED
 USE_UART      = 0 #25 # 25 is 38.4k Debug on Serial. 0 ... deactivate or divider of http://wormfood.net/avrbaudcalc.php for baud rate!
 #------------------------------------------------------------------
-ifeq ($(strip $(USE_UART)),0)
-CSRC        = main.c pff/src/pff.c diskio.c
-else
-CSRC        = main.c pff/src/pff.c diskio.c uart/uart.c
-endif
+CSRC        = src/main.c src/pff/src/pff.c src/diskio.c src/uart/uart.c
 
 TARGET      = avr_boot
-ASRC        = asmfunc.S
+ASRC        = src/asmfunc.S
 OPTIMIZE    = -Os -mcall-prologues -ffunction-sections -fdata-sections
 DEFS        = -DBOOT_ADR=$(BOOT_ADR) -DF_CPU=$(F_CPU) -DUSE_LED=$(USE_LED) -DLED_DDR=$(LED_DDR) -DLED_PORT=$(LED_PORT) -DLED_BIT=$(LED_BIT) -DUSE_UART=$(USE_UART) -DSD_CS_PORT=$(SD_CS_PORT) -DSD_CS_DDR=$(SD_CS_DDR) -DSD_CS_BIT=$(SD_CS_BIT)
 LIBS        =
 DEBUG       = dwarf-2
 
 ASFLAGS     = -Wa,-adhlns=$(<:.S=.lst),-gstabs $(DEFS)
-ALL_ASFLAGS = -mmcu=$(MCU_TARGET) -I. -x assembler-with-cpp $(ASFLAGS)
-CFLAGS      = -g$(DEBUG) -Wall $(OPTIMIZE) $(ADDED_CFLAGS) -mmcu=$(MCU_TARGET) -std=c99 $(DEFS)
+ALL_ASFLAGS = -mmcu=$(MCU_TARGET) -I. -I include -x assembler-with-cpp $(ASFLAGS)
+CFLAGS      = -g$(DEBUG) -Wall $(OPTIMIZE) $(ADDED_CFLAGS) -mmcu=$(MCU_TARGET) -std=c99 $(DEFS) -I include
 LDFLAGS     = -Wl,-Map,$(TARGET).map -Wl,--gc-sections -Wl,--section-start,.text=$(BOOT_ADR)
 OBJ         = $(CSRC:.c=.o) $(ASRC:.S=.o)
 
